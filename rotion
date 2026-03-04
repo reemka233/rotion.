@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rotion | Aesthetic Notion Widgets</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --text: #4a3f6b;
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background-color: #ffffff;
+            color: #4a4a4a;
+        }
+
+        /* --- استايل الويدجت الزجاجي (كما في الكود المطلوب) --- */
+        .glass-container {
+            position: relative;
+            width: 240px; /* كبرت الحجم شوي ليكون أوضح بالعرض */
+            height: 240px;
+            border-radius: 45px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-sizing: border-box;
+            padding: 30px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            margin: 0 auto;
+        }
+
+        .bg-layer {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(-45deg, #f3ebf6, #ffafcc, #b185db, #f3ebf6);
+            background-size: 400% 400%;
+            animation: gradientMove 10s ease infinite;
+            z-index: -2;
+            transition: background 0.8s ease;
+        }
+
+        .glass-container::after {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            z-index: -1;
+        }
+
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 1rem;
+            cursor: pointer;
+            opacity: 0.5;
+            transition: 0.3s;
+            z-index: 10;
+        }
+
+        .tracker-label {
+            font-size: 0.75rem;
+            font-weight: 800;
+            color: var(--text);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+            opacity: 0.7;
+        }
+
+        .timer-display {
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: var(--text);
+            margin-bottom: 20px;
+            line-height: 1;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .widget-btn {
+            border: none;
+            padding: 10px 0;
+            border-radius: 15px;
+            cursor: pointer;
+            font-weight: 800;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        .start-btn-ui {
+            background: rgba(255, 255, 255, 0.6);
+            color: var(--text);
+            flex: 2;
+        }
+
+        .reset-btn-ui {
+            background: rgba(0, 0, 0, 0.05);
+            color: var(--text);
+            flex: 1;
+        }
+
+        /* --- استايل الموقع العام --- */
+        .nav-logo {
+            background: #f472b6;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .copy-toast {
+            visibility: hidden;
+            background: #f472b6;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+        }
+
+        .copy-toast.show {
+            visibility: visible;
+            animation: slideUp 0.4s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; bottom: 10px; }
+            to { opacity: 1; bottom: 30px; }
+        }
+
+        .animate-fade {
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="p-0 m-0">
+
+    <nav class="bg-white/70 backdrop-blur-md border-b border-gray-50 p-4 sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-2 cursor-pointer" onclick="showHome()">
+                <div class="nav-logo">R</div>
+                <span class="font-bold text-xl text-gray-700">Rotion</span>
+            </div>
+        </div>
+    </nav>
+
+    <main id="app-container" class="max-w-5xl mx-auto py-16 px-6">
+        <!-- Content Injected Here -->
+    </main>
+
+    <div id="toast" class="copy-toast font-bold">✨ Link copied, cutie! ✨</div>
+
+    <script>
+        const widgetData = {
+            id: 'dreamy-clock',
+            name: 'Dreamy Clock',
+            url: 'https://reemka233.github.io/notion-widgets/',
+            description: 'A glassmorphic focus timer with animated gradients, designed to match your aesthetic Notion workspace perfectly.'
+        };
+
+        const themes = [
+            "linear-gradient(-45deg, #f3ebf6, #ffafcc, #b185db, #f3ebf6)",
+            "linear-gradient(-45deg, #e0c3fc, #8ec5fc, #fbc2eb, #e0c3fc)",
+            "linear-gradient(-45deg, #ff9a9e, #fad0c4, #fad0c4, #ff9a9e)",
+            "linear-gradient(-45deg, #a18cd1, #fbc2eb, #a18cd1, #fbc2eb)",
+            "linear-gradient(-45deg, #ffecd2, #fcb69f, #ffecd2, #fcb69f)"
+        ];
+        let currentThemeIndex = 0;
+
+        function showHome() {
+            const container = document.getElementById('app-container');
+            container.innerHTML = `
+                <div class="animate-fade text-center lg:text-left">
+                    <h1 class="text-4xl font-extrabold text-gray-800 mb-2">Your <span class="text-pink-400">"Rotion"</span> Gallery</h1>
+                    <p class="text-gray-400 mb-12 font-medium text-lg">Select a widget to get your embed link.</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+                        <div class="group cursor-pointer" onclick="showDetail()">
+                            <div class="glass-container mb-6 group-hover:scale-[1.03] transition-transform duration-300">
+                                <div class="theme-toggle">🎨</div>
+                                <div class="bg-layer" style="background: ${themes[currentThemeIndex]}; background-size: 400% 400%;"></div>
+                                <div class="tracker-label">Focus Tracker</div>
+                                <div class="timer-display">00:00:00</div>
+                                <div class="controls">
+                                    <button class="widget-btn start-btn-ui">Start</button>
+                                    <button class="widget-btn reset-btn-ui">↺</button>
+                                </div>
+                            </div>
+                            <div class="text-center">
+                                <span class="px-4 py-1 bg-pink-50 text-pink-400 rounded-full text-[10px] font-bold uppercase tracking-widest">Glassmorphic</span>
+                                <h3 class="text-2xl font-bold mt-3 text-gray-700">${widgetData.name}</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function showDetail() {
+            const container = document.getElementById('app-container');
+            container.innerHTML = `
+                <div class="animate-fade">
+                    <button onclick="showHome()" class="text-pink-300 font-bold mb-10 hover:text-pink-500 transition flex items-center gap-2">
+                        <i class="fas fa-arrow-left"></i> Back to gallery
+                    </button>
+
+                    <div class="flex flex-col lg:flex-row gap-20 items-center">
+                        <div class="flex-1 text-center lg:text-left">
+                            <h2 class="text-6xl font-extrabold text-gray-800 mb-6 tracking-tight">${widgetData.name}</h2>
+                            <p class="text-gray-400 text-xl mb-12 leading-relaxed font-medium">${widgetData.description}</p>
+                            
+                            <div class="bg-gray-50 p-10 rounded-[50px] border border-gray-100 shadow-sm inline-block w-full max-w-lg">
+                                <label class="text-[11px] font-bold uppercase tracking-[0.2em] text-pink-300 mb-5 block">Notion Widget URL</label>
+                                <div class="flex flex-col gap-4">
+                                    <input id="copy-input" type="text" readonly value="${widgetData.url}" 
+                                           class="w-full bg-white border-2 border-gray-100 p-5 rounded-2xl text-pink-400 font-mono text-sm outline-none text-center">
+                                    <button onclick="copyLink()" class="w-full bg-gradient-to-r from-pink-400 to-pink-300 text-white font-bold py-5 rounded-2xl shadow-xl shadow-pink-100 hover:brightness-105 transition flex items-center justify-center gap-2">
+                                        <i class="fas fa-magic"></i> Copy Link for Notion
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex-1 flex justify-center">
+                            <div class="glass-container scale-125 lg:scale-150">
+                                <div class="theme-toggle" onclick="changeTheme(event)">🎨</div>
+                                <div class="bg-layer" id="detailBgLayer" style="background: ${themes[currentThemeIndex]}; background-size: 400% 400%;"></div>
+                                <div class="tracker-label">Focus Tracker</div>
+                                <div class="timer-display" id="detailDisplay">00:00:00</div>
+                                <div class="controls">
+                                    <button class="widget-btn start-btn-ui" id="detailStartBtn" onclick="toggleTimer(event)">Start</button>
+                                    <button class="widget-btn reset-btn-ui" onclick="resetTimer(event)">↺</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- Timer Logic ---
+        let timer;
+        let seconds = 0;
+        let isRunning = false;
+
+        function toggleTimer(e) {
+            e.stopPropagation();
+            const btn = document.getElementById('detailStartBtn');
+            const display = document.getElementById('detailDisplay');
+
+            if (isRunning) {
+                clearInterval(timer);
+                btn.textContent = 'Start';
+            } else {
+                timer = setInterval(() => {
+                    seconds++;
+                    const h = Math.floor(seconds / 3600);
+                    const m = Math.floor((seconds % 3600) / 60);
+                    const s = seconds % 60;
+                    display.textContent = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+                }, 1000);
+                btn.textContent = 'Pause';
+            }
+            isRunning = !isRunning;
+        }
+
+        function resetTimer(e) {
+            e.stopPropagation();
+            clearInterval(timer);
+            isRunning = false;
+            seconds = 0;
+            document.getElementById('detailDisplay').textContent = '00:00:00';
+            document.getElementById('detailStartBtn').textContent = 'Start';
+        }
+
+        function changeTheme(e) {
+            e.stopPropagation();
+            currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+            const layer = document.getElementById('detailBgLayer');
+            layer.style.background = themes[currentThemeIndex];
+            layer.style.backgroundSize = "400% 400%";
+        }
+
+        function copyLink() {
+            const input = document.getElementById('copy-input');
+            input.select();
+            document.execCommand('copy');
+            const toast = document.getElementById('toast');
+            toast.className = "copy-toast show font-bold";
+            setTimeout(() => { toast.className = "copy-toast"; }, 2000);
+        }
+
+        window.onload = showHome;
+    </script>
+</body>
+</html>
